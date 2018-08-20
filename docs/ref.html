@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Vue-ref</title>
+</head>
+
+<body>
+  <!--
+    ref 是在 Vue 获取 DOM 的一种方式
+    ref 是 reference 的缩写
+
+    ref 可以用来直接帮助我们访问子组件内容
+   -->
+  <div id="app">
+    <h1 ref="title">{{ message }}</h1>
+    <foo ref="foo"></foo>
+  </div>
+  <script src="../node_modules/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      // cmud
+      // create mount update destroy
+      created () {
+        // this.$refs 是一个对象
+        console.log(this.$refs)
+      },
+      mounted () {
+        this.$refs.title.innerHTML = 'hello'
+
+        // 直接拿到了子组件实例
+        // 直接在父组件拿到了子组件的实例了
+        console.log(this.$refs.foo.message)
+
+        // ref 两种作用
+        //    1. 获取 DOM
+        //    2. 获取组件实例
+        //        从某种意义上来讲，ref 也是一种组件通信的方式
+        //        你会发现我们不需要 Events Up  也可以在父组件拿到子组件的成员
+        this.$refs.foo.message = 'hello world'
+
+        // 子组件实例
+        console.log('this.$refs.foo = ', this.$refs.foo)
+      },
+      data: {
+        message: 'Hello Vue.js!'
+      },
+      methods: {},
+      components: {
+        foo: {
+          template: `
+            <div>
+              <p>{{ message }}</p>
+              <ul>
+                <li v-for="(item, index) in fruits" :key="index">{{ item }}</li>
+              </ul>
+            </div>
+          `,
+          data () {
+            return {
+              message: 'foo message',
+              fruits: ['香蕉', '苹果']
+            }
+          },
+          mounted () {
+            // 我们可以直接在子组件中通过组件实例 this.$parent 来访问我们的父组件
+            // 我们不建议这么做
+            console.log(this.$parent)
+          }
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

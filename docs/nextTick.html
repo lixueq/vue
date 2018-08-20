@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Vue-nextTick</title>
+  <!--
+    在修改数据之后立即操作 DOM 是拿不到最新的 DOM 数据的。
+    如果想要在修改数据之后拿到更新视图之后的 DOM ，则使用  ，获取更新后的 DOM。
+   -->
+</head>
+
+<body>
+  <div id="app">
+    <h1 ref="title">{{ message }}</h1>
+    <button @click="changeMessage">改变 message</button>
+    <hr><hr><hr>
+    <!-- <p ref="ppp" v-if="seen">你看不见我</p> -->
+    <input type="text" v-if="seen" ref="input">
+    <button @click="showSeen">滚出来</button>
+  </div>
+  <script src="../node_modules/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue.js!',
+        seen: false
+      },
+      methods: {
+        changeMessage () {
+          // 数据改变驱动视图更新不是立即的
+          // 你甚至可以认为更新视图的操作是异步的
+          this.message = 'hello'
+
+          // 所以
+          // 在这里通过 DOM 的方式来获取 message
+          // console.log(this.$refs.title.innerHTML)
+
+          // 该代码就一定会在数据更新视图之后才执行
+          // setTimeout(() => {
+          //   console.log(this.$refs.title.innerHTML)
+          // }, 0)
+
+          // 这里的 this Window
+          // 全局的很少用
+          // Vue.nextTick(function () {
+          //   console.log(this)
+          // })
+
+          // 这里的 this Vue 实例
+          // 推荐用实例去调用 $nextTick
+          this.$nextTick(function () {
+            console.log(this.$refs.title.innerHTML)
+          })
+        },
+
+        showSeen () {
+          this.seen = true
+
+          // 修改完数据立即操作 DOM 必须放到 this.$nextTick 才可以
+          this.$nextTick((a) => {
+            this.$refs.input.focus()
+          })
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
